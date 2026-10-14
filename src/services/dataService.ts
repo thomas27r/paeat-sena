@@ -422,3 +422,4 @@ export async function resetDailyDeliveriesInCloud(currentStudents: Student[]): P
     handleFirestoreError(err, OperationType.UPDATE, path);
   }
 }
+

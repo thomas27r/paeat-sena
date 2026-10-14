@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Header } from '../components/Header';
-import { Student, AdminAccount } from '../types';
+import { Student, AdminAccount, Repartidor, PQRMessage, DailyHistoryRecord } from '../types';
 import { APP_VERSION_LABEL } from '../config/version';
 import {
   User,
@@ -30,6 +30,8 @@ import {
   ExternalLink,
   AlertCircle,
   X,
+  RotateCcw,
+  Download,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ActiveUserSession } from './LoginView';
@@ -53,6 +55,9 @@ interface AdminSettingsViewProps {
   onLogout: () => void;
   pqrUnreadCount?: number;
   students?: Student[];
+  repartidores?: Repartidor[];
+  pqrs?: PQRMessage[];
+  dailyHistory?: DailyHistoryRecord[];
   onImportStudents?: (students: Student[], mode: 'append' | 'replace') => void;
 }
 
@@ -79,10 +84,51 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({
   onLogout,
   pqrUnreadCount = 0,
   students = [],
+  repartidores = [],
+  pqrs = [],
+  dailyHistory = [],
 }) => {
   const isRectoria = activeUser?.subRole === 'rectoria';
   const [activeCategory, setActiveCategory] = useState<SettingsCategory>('perfil');
   const [muted, , toggleAudioMute] = useAudioMuted();
+  const [backupSuccess, setBackupSuccess] = useState(false);
+
+  const handleDownloadBackup = () => {
+    playSuccessSound();
+
+    const backupData = {
+      backupVersion: '2.4.0',
+      exportedAt: new Date().toISOString(),
+      institution: 'Institución Educativa Empresarial - PAEAT',
+      exportedBy: activeUser?.fullName || 'Administrador PAEAT',
+      exportedByDoc: activeUser?.documentNumber || '',
+      database: {
+        studentsCount: students.length,
+        repartidoresCount: repartidores.length,
+        pqrsCount: pqrs.length,
+        dailyHistoryCount: dailyHistory.length,
+        students,
+        repartidores,
+        pqrs,
+        dailyHistory,
+      },
+    };
+
+    const jsonStr = JSON.stringify(backupData, null, 2);
+    const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    link.setAttribute('download', `copia_seguridad_paeat_${dateStamp}.json`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
+    setBackupSuccess(true);
+    setTimeout(() => setBackupSuccess(false), 4000);
+  };
 
   // Confidentiality State (Starts active by default to protect data on screen)
   const [isConfidential, setIsConfidential] = useState(() => isPrivacyModeEnabled());
@@ -1021,6 +1067,55 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({
                         )}
                       </button>
                     </div>
+
+                    {/* Descarga de Copia de Seguridad JSON (Exclusivo Admin - Oculto para Rectoría) */}
+                    {!isRectoria && (
+                      <div className="bg-[#1e030c] p-3 rounded-xl border border-amber-500/40 shadow-md space-y-2">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5">
+                          <div className="flex items-start gap-2.5">
+                            <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center shrink-0">
+                              <Download className="w-4 h-4 stroke-[2.3]" />
+                            </div>
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <h3 className="text-xs font-black text-white">
+                                  Copia de Seguridad Local (JSON)
+                                </h3>
+                                <span className="bg-amber-400/20 text-amber-300 text-[9px] font-black px-1.5 py-0.2 rounded border border-amber-400/30">
+                                  Exclusivo Admin
+                                </span>
+                              </div>
+                              <p className="text-stone-300 text-[11px] leading-relaxed mt-0.5 max-w-xl">
+                                Descarga un respaldo completo e instantáneo en archivo .json con la base de datos activa ({students.length} estudiantes, {repartidores.length} repartidores y {pqrs.length} PQRs).
+                              </p>
+                            </div>
+                          </div>
+
+                          <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            type="button"
+                            onClick={handleDownloadBackup}
+                            className="px-3 py-2 rounded-lg bg-amber-400 hover:bg-amber-300 text-stone-950 border border-amber-300 text-xs font-black transition cursor-pointer flex items-center gap-1.5 shrink-0 shadow-md self-end sm:self-center"
+                            title="Descargar respaldo local en archivo JSON"
+                          >
+                            <Download className="w-4 h-4 stroke-[2.5]" />
+                            <span>Descargar Backup (JSON)</span>
+                          </motion.button>
+                        </div>
+
+                        {backupSuccess && (
+                          <motion.div
+                            initial={{ opacity: 0, y: -4 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-emerald-950/90 border border-emerald-500/60 p-2 rounded-lg flex items-center gap-2 text-emerald-200 text-xs font-bold"
+                          >
+                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                            <span>¡Copia de seguridad local JSON generada y descargada con éxito!</span>
+                          </motion.div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               )}
@@ -1254,6 +1349,7 @@ export const AdminSettingsView: React.FC<AdminSettingsViewProps> = ({
           </div>
         )}
       </AnimatePresence>
+
     </div>
   );
 };

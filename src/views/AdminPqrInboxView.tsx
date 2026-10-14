@@ -244,6 +244,7 @@ export const AdminPqrInboxView: React.FC<AdminPqrInboxViewProps> = ({
           )}
         </div>
       </main>
+
     </div>
   );
 };

@@ -1,8 +1,7 @@
 import React from 'react';
 import { Header } from '../components/Header';
-import { ShieldCheck, Truck, ChevronRight } from 'lucide-react';
+import { ShieldCheck, Truck, ChevronRight, Building2 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { INSTITUTIONAL_LOGO_URL } from '../constants/branding';
 
 interface RoleSelectViewProps {
   onBack: () => void;
@@ -24,14 +23,9 @@ export const RoleSelectView: React.FC<RoleSelectViewProps> = ({
           transition={{ duration: 0.2 }}
           className="w-full space-y-4"
         >
-          {/* Institutional Badge */}
           <div className="flex flex-col items-center gap-1.5">
-            <div className="w-14 h-14 rounded-2xl bg-white p-1.5 flex items-center justify-center shadow-lg border-2 border-[#3d081b] ring-2 ring-amber-400/40">
-              <img
-                src={INSTITUTIONAL_LOGO_URL}
-                alt="Logo Institución Educativa Empresarial"
-                className="w-full h-full object-contain"
-              />
+            <div className="w-12 h-12 rounded-2xl bg-[#3d081b] text-amber-300 flex items-center justify-center shadow-lg border-2 border-amber-400/40">
+              <Building2 className="w-6 h-6 stroke-[2.2]" />
             </div>
           </div>
 

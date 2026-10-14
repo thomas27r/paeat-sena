@@ -1072,6 +1072,9 @@ export default function App() {
           hiddenCount={totalHiddenCount}
           pqrUnreadCount={unreadPqrCount}
           students={activeStudents}
+          repartidores={activeRepartidores}
+          pqrs={activePqrs}
+          dailyHistory={dailyHistory}
           onImportStudents={handleImportStudents}
           onLogout={handleLogout}
         />

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Header } from '../components/Header';
 import { UserRole } from '../types';
-import { PaeatLogo } from '../components/PaeatLogo';
 import {
   Mail,
   Globe,
@@ -12,6 +11,7 @@ import {
   Code2,
   GraduationCap,
   Sparkles,
+  Utensils,
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -50,7 +50,7 @@ export const ContactsView: React.FC<ContactsViewProps> = ({
           {/* Header */}
           <div className="text-center space-y-1 flex flex-col items-center">
             <div className="w-12 h-12 rounded-xl bg-[#1e030c] text-amber-300 flex items-center justify-center shadow-md mb-1 border border-stone-700 p-1.5">
-              <PaeatLogo size="md" />
+              <Utensils className="w-6 h-6 stroke-[2.2]" />
             </div>
             <div className="inline-flex items-center gap-1.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">
               <Sparkles className="w-3 h-3" />

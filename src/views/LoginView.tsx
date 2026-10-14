@@ -5,7 +5,6 @@ import { Repartidor, AdminAccount, ActiveUserSession } from '../types';
 import { INITIAL_ADMINS } from '../data/initialData';
 import { motion, AnimatePresence } from 'motion/react';
 import { checkDriverScheduleAccess, ScheduleCheckResult, formatTime12h } from '../utils/schedule';
-import { INSTITUTIONAL_LOGO_URL } from '../constants/branding';
 
 export type { ActiveUserSession };
 
@@ -121,15 +120,8 @@ export const LoginView: React.FC<LoginViewProps> = ({
           transition={{ duration: 0.2 }}
           className="w-full bg-[#2e0513] p-4 sm:p-5 rounded-2xl border border-stone-700/70 shadow-2xl flex flex-col items-center relative overflow-hidden"
         >
-          {/* Institutional Logo & Decorative Role Icon */}
-          <div className="flex items-center gap-2 mb-2">
-            <div className="w-11 h-11 rounded-xl bg-white p-1 flex items-center justify-center shadow-md ring-2 ring-amber-400/30">
-              <img
-                src={INSTITUTIONAL_LOGO_URL}
-                alt="Logo Institución Educativa Empresarial"
-                className="w-full h-full object-contain"
-              />
-            </div>
+          {/* Role Badge Icon */}
+          <div className="flex items-center justify-center gap-2 mb-2">
             <div className="w-11 h-11 rounded-xl bg-amber-400 text-stone-950 flex items-center justify-center shadow-md ring-2 ring-amber-400/20">
               {role === 'admin' ? (
                 <ShieldCheck className="w-6 h-6 stroke-[2.2]" />

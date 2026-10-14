@@ -14,7 +14,6 @@ import { motion } from 'motion/react';
 import { ActiveUserSession } from './LoginView';
 import { playTapSound } from '../utils/audio';
 import { maskDocument, maskEmail, isPrivacyModeEnabled } from '../utils/privacy';
-import { IEELogo } from '../components/IEELogo';
 
 interface AdminHomeViewProps {
   students?: Student[];
@@ -98,9 +97,6 @@ export const AdminHomeView: React.FC<AdminHomeViewProps> = ({
 
         {/* Section Header */}
         <div className="text-center my-2 space-y-1 flex flex-col items-center">
-          <div className="w-12 h-12 mb-1 drop-shadow-sm">
-            <IEELogo className="w-full h-full" />
-          </div>
           <div className="inline-flex items-center gap-1.5 bg-amber-400/15 border border-amber-400/30 text-amber-300 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">
             <Sparkles className="w-3 h-3" />
             <span>Panel de Administración Central</span>
