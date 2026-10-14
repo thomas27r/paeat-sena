@@ -1,0 +1,104 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny Catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidStudent(data) {
+      return data.keys().hasAll(['id', 'fullName', 'documentNumber', 'grade', 'status'])
+        && data.id is string && data.id.size() <= 128
+        && data.fullName is string && data.fullName.size() > 0 && data.fullName.size() <= 200
+        && data.documentNumber is string && data.documentNumber.size() <= 50
+        && data.grade is string && data.grade in ['5', '6', '7', '8', '9', '10', '11']
+        && data.status is string && data.status in ['Recibido', 'Pendiente']
+        && (!('deliveredByName' in data) || (data.deliveredByName is string && data.deliveredByName.size() <= 200))
+        && (!('deliveredById' in data) || (data.deliveredById is string && data.deliveredById.size() <= 128))
+        && (!('deliveredByDoc' in data) || (data.deliveredByDoc is string && data.deliveredByDoc.size() <= 50))
+        && (!('isDeleted' in data) || data.isDeleted is bool);
+    }
+
+    function isValidRepartidor(data) {
+      return data.keys().hasAll(['id', 'fullName', 'documentNumber'])
+        && data.id is string && data.id.size() <= 128
+        && data.fullName is string && data.fullName.size() > 0 && data.fullName.size() <= 200
+        && data.documentNumber is string && data.documentNumber.size() <= 50
+        && (!('isDeleted' in data) || data.isDeleted is bool)
+        && (!('hasScheduleRestriction' in data) || data.hasScheduleRestriction is bool)
+        && (!('shiftStart' in data) || (data.shiftStart is string && data.shiftStart.size() <= 10))
+        && (!('shiftEnd' in data) || (data.shiftEnd is string && data.shiftEnd.size() <= 10))
+        && (!('shiftName' in data) || (data.shiftName is string && data.shiftName.size() <= 100));
+    }
+
+    function isValidAdmin(data) {
+      return data.keys().hasAll(['id', 'fullName', 'email', 'documentNumber', 'password'])
+        && data.id is string && data.id.size() <= 128
+        && data.fullName is string && data.fullName.size() > 0 && data.fullName.size() <= 200
+        && data.email is string && data.email.size() <= 200
+        && data.documentNumber is string && data.documentNumber.size() <= 50
+        && data.password is string && data.password.size() <= 100
+        && (!('isDeleted' in data) || data.isDeleted is bool);
+    }
+
+    function isValidPqr(data) {
+      return data.keys().hasAll(['id', 'email', 'message', 'createdAt', 'status'])
+        && data.id is string && data.id.size() <= 128
+        && data.email is string && data.email.size() <= 200
+        && data.message is string && data.message.size() > 0 && data.message.size() <= 5000
+        && data.status is string && data.status in ['enviado', 'leido']
+        && (!('isDeleted' in data) || data.isDeleted is bool);
+    }
+
+    function isValidDailyHistory(data) {
+      return data.keys().hasAll(['id', 'dateStr', 'totalStudents', 'recibidosCount', 'pendientesCount', 'percentage'])
+        && data.id is string && data.id.size() <= 128
+        && data.dateStr is string && data.dateStr.size() <= 50;
+    }
+
+    // Students Collection
+    match /students/{studentId} {
+      allow read: if true;
+      allow create, update: if isValidId(studentId) && isValidStudent(request.resource.data);
+      allow delete: if isValidId(studentId);
+    }
+
+    // Repartidores Collection
+    match /repartidores/{repartidorId} {
+      allow read: if true;
+      allow create, update: if isValidId(repartidorId) && isValidRepartidor(request.resource.data);
+      allow delete: if isValidId(repartidorId);
+    }
+
+    // Admins Collection
+    match /admins/{adminId} {
+      allow read: if true;
+      allow create, update: if isValidId(adminId) && isValidAdmin(request.resource.data);
+      allow delete: if isValidId(adminId);
+    }
+
+    // PQRs Collection
+    match /pqrs/{pqrId} {
+      allow read: if true;
+      allow create, update: if isValidId(pqrId) && isValidPqr(request.resource.data);
+      allow delete: if isValidId(pqrId);
+    }
+
+    // Daily History Collection
+    match /daily_history/{historyId} {
+      allow read: if true;
+      allow create, update: if isValidId(historyId) && isValidDailyHistory(request.resource.data);
+      allow delete: if isValidId(historyId);
+    }
+
+    // Test Connection Collection
+    match /test/{connectionId} {
+      allow read, write: if true;
+    }
+  }
+}

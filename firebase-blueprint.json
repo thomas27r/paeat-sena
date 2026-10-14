@@ -1,0 +1,130 @@
+{
+  "entities": {
+    "Student": {
+      "title": "Student",
+      "description": "Estudiante beneficiario del programa PAE",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "fullName": { "type": "string", "maxLength": 200 },
+        "documentNumber": { "type": "string", "maxLength": 50 },
+        "grade": { "type": "string", "enum": ["5", "6", "7", "8", "9", "10", "11"] },
+        "status": { "type": "string", "enum": ["Recibido", "Pendiente"] },
+        "deliveryTimestamp": { "type": "string", "maxLength": 100 },
+        "deliveredById": { "type": "string", "maxLength": 128 },
+        "deliveredByName": { "type": "string", "maxLength": 200 },
+        "deliveredByDoc": { "type": "string", "maxLength": 50 },
+        "deliveredByRole": { "type": "string", "maxLength": 50 },
+        "avatarUrl": { "type": "string", "maxLength": 1000 },
+        "isDeleted": { "type": "boolean" },
+        "deletedAt": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["id", "fullName", "documentNumber", "grade", "status"]
+    },
+    "Repartidor": {
+      "title": "Repartidor",
+      "description": "Personal encargado de repartir el refrigerio",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "fullName": { "type": "string", "maxLength": 200 },
+        "documentNumber": { "type": "string", "maxLength": 50 },
+        "avatarUrl": { "type": "string", "maxLength": 1000 },
+        "password": { "type": "string", "maxLength": 100 },
+        "isActive": { "type": "boolean" },
+        "isDeleted": { "type": "boolean" },
+        "deletedAt": { "type": "string", "maxLength": 100 },
+        "hasScheduleRestriction": { "type": "boolean" },
+        "shiftStart": { "type": "string", "maxLength": 10 },
+        "shiftEnd": { "type": "string", "maxLength": 10 },
+        "shiftName": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["id", "fullName", "documentNumber"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Cuenta de Administrador o Rectoria",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "fullName": { "type": "string", "maxLength": 200 },
+        "email": { "type": "string", "maxLength": 200 },
+        "documentNumber": { "type": "string", "maxLength": 50 },
+        "password": { "type": "string", "maxLength": 100 },
+        "avatarUrl": { "type": "string", "maxLength": 1000 },
+        "subRole": { "type": "string", "enum": ["admin", "rectoria"] },
+        "isDeleted": { "type": "boolean" },
+        "deletedAt": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["id", "fullName", "email", "documentNumber", "password"]
+    },
+    "PQR": {
+      "title": "PQR",
+      "description": "Peticion, Queja, Reclamo o Sugerencia",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 200 },
+        "senderName": { "type": "string", "maxLength": 200 },
+        "senderDoc": { "type": "string", "maxLength": 50 },
+        "senderRole": { "type": "string", "maxLength": 50 },
+        "message": { "type": "string", "maxLength": 5000 },
+        "createdAt": { "type": "string", "maxLength": 100 },
+        "status": { "type": "string", "enum": ["enviado", "leido"] },
+        "isDeleted": { "type": "boolean" },
+        "deletedAt": { "type": "string", "maxLength": 100 }
+      },
+      "required": ["id", "email", "message", "createdAt", "status"]
+    },
+    "DailyHistory": {
+      "title": "DailyHistory",
+      "description": "Resumen historico diario de entregas y estudiantes",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "dateStr": { "type": "string", "maxLength": 50 },
+        "formattedDate": { "type": "string", "maxLength": 100 },
+        "totalStudents": { "type": "integer" },
+        "recibidosCount": { "type": "integer" },
+        "pendientesCount": { "type": "integer" },
+        "percentage": { "type": "number" }
+      },
+      "required": ["id", "dateStr", "totalStudents", "recibidosCount", "pendientesCount", "percentage"]
+    },
+    "TestConnection": {
+      "title": "TestConnection",
+      "description": "Verificacion de conexion a Firestore",
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "maxLength": 50 }
+      },
+      "required": ["status"]
+    }
+  },
+  "firestore": {
+    "/students/{studentId}": {
+      "schema": "Student",
+      "description": "Listado de estudiantes y estado de entrega de refrigerio"
+    },
+    "/repartidores/{repartidorId}": {
+      "schema": "Repartidor",
+      "description": "Listado de repartidores registrados"
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Cuentas de administradores y rectoria"
+    },
+    "/pqrs/{pqrId}": {
+      "schema": "PQR",
+      "description": "Reportes y mensajes PQR registrados"
+    },
+    "/daily_history/{historyId}": {
+      "schema": "DailyHistory",
+      "description": "Cierres historicos de jornadas"
+    },
+    "/test/{connectionId}": {
+      "schema": "TestConnection",
+      "description": "Coleccion de prueba para test de conexion"
+    }
+  }
+}
